@@ -13,6 +13,7 @@ import urllib2
 baseurl = r'http://www.xiami.com/song/playlist/id/'
 albumurl_root = r'/type/1'
 artisturl_root = r'/type/2'
+save_path = '/home/blahgeek/Music/'
 
 def progress_bar(current, total):
 	sys.stderr.write(str(current) + ' of ' + str(total)\
@@ -32,5 +33,5 @@ if __name__ == '__main__':
 	tracks = BeautifulStoneSoup(raw_data).findAll(name='track')
 	for i in tracks:
 		song = track(i)
-		song.download('./', ReportHook = progress_bar)
+		song.download(save_path, ReportHook = progress_bar)
 		sys.stderr.write('\n\n')

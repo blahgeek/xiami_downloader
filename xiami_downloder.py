@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # -*- coding=UTF-8 -*-
 # Created at May 31 10:28 by BlahGeek@Gmail.com
 
@@ -21,7 +21,7 @@ def progress_bar(current, total):
 
 if __name__ == '__main__':
 	if len(sys.argv) != 3 or sys.argv[1] not in ['song', 'album', 'artist']:
-		print 'usage: ' + argv[0] + ' song|album|artist ID\n'
+		print 'usage: ' + sys.argv[0] + ' song|album|artist ID\n'
 		sys.exit(-1)
 	url = baseurl + sys.argv[2]
 	if sys.argv[1] == 'album':

@@ -25,6 +25,9 @@ class track:
 	def download(self, path, ReportHook = None):
 		filename = os.path.join(path, self.id3['artist'] + ' - ' + \
 				self.id3['title'] + '.' + self.url.rpartition('.')[2])
+		if os.path.exists(filename):
+			sys.stderr.write('file exists. ignore.\n')
+			return
 		req = urllib2.urlopen(self.url)
 		total_size = int(req.info().getheader('Content-Length').strip())
 		fout = open(filename, 'wb')

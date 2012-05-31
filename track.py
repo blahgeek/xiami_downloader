@@ -21,11 +21,24 @@ class track:
 			self.id3[i] = self.id3[i] #.rpartition(r']]')[0]
 		self.url = geturl(tag.find(name='location').text.strip())
 		self.picurl = tag.find(name='pic').text.strip()
-		print self.id3, self.url, self.picurl
-	def download(self, path):
-		filename = os.path.join(path, self.id3['artist'] + ' - ' + self.id3['title'])
-		filename = 'out.mp3'
-		os.system('wget ' + self.url + ' -O ' + filename)
+		sys.stderr.write(self.id3['title'] + ' parser OK\n')
+	def download(self, path, ReportHook = None):
+		filename = os.path.join(path, self.id3['artist'] + ' - ' + \
+				self.id3['title'] + '.' + self.url.rpartition('.')[2])
+		req = urllib2.urlopen(self.url)
+		total_size = int(req.info().getheader('Content-Length').strip())
+		fout = open(filename, 'wb')
+		read_size = 0
+		while True:
+			_little_data = req.read(1024)
+			read_size += 1024
+			if len(_little_data) == 0:
+				break
+			fout.write(_little_data)
+			if ReportHook != None:
+				ReportHook(read_size, total_size)
+		fout.close()
+		sys.stderr.write(self.id3['title'] + ' download OK\n')
 
 		easyid3 = EasyID3()
 		easyid3['title'] = self.id3['title']
@@ -42,3 +55,4 @@ class track:
 				desc = 'Cover picture from xiami.com fetched by BlahGeek.', \
 				data = pic.read()))
 		harid3.save()
+		sys.stderr.write(self.id3['title'] + ' ID3 OK\n')

@@ -13,6 +13,7 @@ import urllib2
 baseurl = r'http://www.xiami.com/song/playlist/id/'
 albumurl_root = r'/type/1'
 artisturl_root = r'/type/2'
+collecturl_root = r'/type/3'
 save_path = '/home/blahgeek/Music/'
 
 def progress_bar(current, total):
@@ -20,14 +21,18 @@ def progress_bar(current, total):
 			+ ' Bytes downloaded.\r')
 
 if __name__ == '__main__':
-	if len(sys.argv) != 3 or sys.argv[1] not in ['song', 'album', 'artist']:
-		print 'usage: ' + sys.argv[0] + ' song|album|artist ID\n'
+	if len(sys.argv) < 3 or sys.argv[1] not in ['song', 'album', 'artist', 'collect']:
+		print 'usage: ' + sys.argv[0] + ' song|album|artist ID [path]\n'
 		sys.exit(-1)
 	url = baseurl + sys.argv[2]
 	if sys.argv[1] == 'album':
 		url += albumurl_root
 	if sys.argv[1] == 'artist':
 		url += artisturl_root
+	if sys.argv[1] == 'collect':
+		url += collecturl_root
+	if len(sys.argv) >= 4:
+		save_path = sys.argv[3]
 	
 	raw_data = urllib2.urlopen(url).read()
 	tracks = BeautifulStoneSoup(raw_data).findAll(name='track')

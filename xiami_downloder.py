@@ -17,8 +17,10 @@ collecturl_root = r'/type/3'
 save_path = '/home/blahgeek/Music/'
 
 def progress_bar(current, total):
-	sys.stderr.write(str(current) + ' of ' + str(total)\
-			+ ' Bytes downloaded.\r')
+	bar_size = 30
+	done_length = int(float(current) / float(total) * bar_size)
+	sys.stderr.write('\r[' + '='*done_length + ' '*(bar_size-done_length) + ']  ' + \
+			str(current) + ' of ' + str(total) + ' Bytes downloaded.')
 
 if __name__ == '__main__':
 	if len(sys.argv) < 3 or sys.argv[1] not in ['song', 'album', 'artist', 'collect']:

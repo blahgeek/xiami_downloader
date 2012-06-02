@@ -21,36 +21,39 @@ class track:
 			self.id3[i] = self.id3[i] #.rpartition(r']]')[0]
 		self.url = geturl(tag.find(name='location').text.strip())
 		self.picurl = tag.find(name='pic').text.strip()
-		sys.stderr.write(self.id3['title'] + ' parser OK\n')
+		self._file = self.id3['artist'] + ' - ' + \
+				self.id3['title'] + '.' + self.url.rpartition('.')[2]
+		sys.stderr.write(self._file + '\n')
 	def download(self, path, ReportHook = None):
-		filename = os.path.join(path, self.id3['artist'] + ' - ' + \
-				self.id3['title'] + '.' + self.url.rpartition('.')[2])
-		if os.path.exists(filename):
-			sys.stderr.write('file exists. ignore.\n')
+		self.filename = os.path.join(path, self._file)
+		if os.path.exists(self.filename):
+			sys.stderr.write(' File exists. Ignore.')
 			return
 		req = urllib2.urlopen(self.url)
 		total_size = int(req.info().getheader('Content-Length').strip())
-		fout = open(filename, 'wb')
+		fout = open(self.filename, 'wb')
+		
 		read_size = 0
+		trunk_size = 10240
 		while True:
-			_little_data = req.read(1024)
-			read_size += 1024
+			_little_data = req.read(trunk_size)
+			read_size += len(_little_data)
 			if len(_little_data) == 0:
 				break
 			fout.write(_little_data)
 			if ReportHook != None:
 				ReportHook(read_size, total_size)
 		fout.close()
-		sys.stderr.write(self.id3['title'] + ' download OK\n')
+		sys.stderr.write(' OK.')
 
 		easyid3 = EasyID3()
 		easyid3['title'] = self.id3['title']
 		easyid3['album'] = self.id3['album_name']
 		easyid3['artist'] = self.id3['artist']
-		easyid3.save(filename)
+		easyid3.save(self.filename)
 
 		pic = urllib2.urlopen(self.picurl)
-		harid3 = ID3(filename)
+		harid3 = ID3(self.filename)
 		harid3.add(APIC(\
 				encoding = 3, \
 				mime = pic.info().type, \
@@ -58,4 +61,4 @@ class track:
 				desc = 'Cover picture from xiami.com fetched by BlahGeek.', \
 				data = pic.read()))
 		harid3.save()
-		sys.stderr.write(self.id3['title'] + ' ID3 OK\n')
+		sys.stderr.write(' ID3 OK.')

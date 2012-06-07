@@ -15,6 +15,7 @@ albumurl_root = r'/type/1'
 artisturl_root = r'/type/2'
 collecturl_root = r'/type/3'
 save_path = '/home/blahgeek/Music/'
+download_types = ['song', 'album', 'artist', 'collect']
 
 def progress_bar(current, total):
 	bar_size = 30
@@ -23,8 +24,8 @@ def progress_bar(current, total):
 			str(current) + ' of ' + str(total) + ' Bytes downloaded.')
 
 if __name__ == '__main__':
-	if len(sys.argv) < 3 or sys.argv[1] not in ['song', 'album', 'artist', 'collect']:
-		print 'usage: ' + sys.argv[0] + ' song|album|artist ID [path]\n'
+	if len(sys.argv) < 3 or sys.argv[1] not in download_types:
+		print 'usage: ' + sys.argv[0] + '|'.join(download_types) + ' ID [path]\n'
 		sys.exit(-1)
 	url = baseurl + sys.argv[2]
 	if sys.argv[1] == 'album':

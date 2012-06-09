@@ -21,11 +21,13 @@ class track:
 			self.id3[i] = self.id3[i] #.rpartition(r']]')[0]
 		self.url = geturl(tag.find(name='location').text.strip())
 		self.picurl = tag.find(name='pic').text.strip()
+		self.lyricurl = tag.find(name='lyric').text.strip()
 		self._file = self.id3['artist'] + ' - ' + \
 				self.id3['title'] + '.' + self.url.rpartition('.')[2]
 		sys.stderr.write(self._file + '\n')
 	def download(self, path, ReportHook = None):
 		self.filename = os.path.join(path, self._file)
+		self.lyricfilename = os.path.join(path, 'lyrics', self._file.rpartition('.')[0] + '.lrc')
 		if os.path.exists(self.filename):
 			sys.stderr.write(' File exists. Ignore.')
 			return
@@ -44,7 +46,6 @@ class track:
 			if ReportHook != None:
 				ReportHook(read_size, total_size)
 		fout.close()
-		sys.stderr.write(' OK.')
 
 		easyid3 = EasyID3()
 		easyid3['title'] = self.id3['title']
@@ -62,3 +63,8 @@ class track:
 				data = pic.read()))
 		harid3.save()
 		sys.stderr.write(' ID3 OK.')
+
+		fout = open(self.lyricfilename, 'wb')
+		fout.write(urllib2.urlopen(self.lyricurl).read())
+		fout.close()
+		sys.stderr.write(' Lyrics OK.')

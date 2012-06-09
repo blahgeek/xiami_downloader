@@ -25,7 +25,7 @@ def progress_bar(current, total):
 
 if __name__ == '__main__':
 	if len(sys.argv) < 3 or sys.argv[1] not in download_types:
-		print 'usage: ' + sys.argv[0] + '|'.join(download_types) + ' ID [path]\n'
+		print 'usage:', sys.argv[0], '|'.join(download_types), 'ID [path]\n'
 		sys.exit(-1)
 	url = baseurl + sys.argv[2]
 	if sys.argv[1] == 'album':
@@ -39,6 +39,7 @@ if __name__ == '__main__':
 	
 	raw_data = urllib2.urlopen(url).read()
 	tracks = BeautifulStoneSoup(raw_data).findAll(name='track')
+	sys.stderr.write(str(len(tracks)) + ' song(s) found.\n')
 	for i in tracks:
 		song = track(i)
 		song.download(save_path, ReportHook = progress_bar)

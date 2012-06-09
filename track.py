@@ -37,15 +37,21 @@ class track:
 		
 		read_size = 0
 		trunk_size = 10240
-		while True:
-			_little_data = req.read(trunk_size)
-			read_size += len(_little_data)
-			if len(_little_data) == 0:
-				break
-			fout.write(_little_data)
-			if ReportHook != None:
-				ReportHook(read_size, total_size)
-		fout.close()
+		try:
+			while True:
+				_little_data = req.read(trunk_size)
+				read_size += len(_little_data)
+				if len(_little_data) == 0:
+					break
+				fout.write(_little_data)
+				if ReportHook != None:
+					ReportHook(read_size, total_size)
+			fout.close()
+		except KeyboardInterrupt:
+			fout.close()
+			os.remove(self.filename)
+			sys.stderr.write('\n\nDownload cancelled. ' + self._file + ' removed. Exit.\n')
+			sys.exit(0)
 
 		easyid3 = EasyID3()
 		easyid3['title'] = self.id3['title']

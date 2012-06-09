@@ -39,7 +39,7 @@ if __name__ == '__main__':
 	
 	raw_data = urllib2.urlopen(url).read()
 	tracks = BeautifulStoneSoup(raw_data).findAll(name='track')
-	sys.stderr.write(str(len(tracks)) + ' song(s) found.\n')
+	sys.stderr.write(str(len(tracks)) + ' song(s) found.\n\n')
 	for i in tracks:
 		song = track(i)
 		song.download(save_path, ReportHook = progress_bar)

@@ -22,6 +22,8 @@ class track:
 		self.url = geturl(tag.find(name='location').text.strip())
 		self.picurl = tag.find(name='pic').text.strip()
 		self.lyricurl = tag.find(name='lyric').text.strip()
+		if not self.lyricurl.endswith('.lrc'):
+			self.lyricurl = None
 		self._file = self.id3['artist'] + ' - ' + \
 				self.id3['title'] + '.' + self.url.rpartition('.')[2]
 		sys.stderr.write(self._file + '\n')
@@ -56,7 +58,8 @@ class track:
 		easyid3 = EasyID3()
 		easyid3['title'] = self.id3['title']
 		easyid3['album'] = self.id3['album_name']
-		easyid3['artist'] = self.id3['artist']
+		easyid3['artist'] = self.id3['artist'].split(';')
+		easyid3['performer'] = easyid3['artist'][0]
 		easyid3.save(self.filename)
 
 		pic = urllib2.urlopen(self.picurl)
@@ -70,7 +73,10 @@ class track:
 		harid3.save()
 		sys.stderr.write(' ID3 OK.')
 
-		fout = open(self.lyricfilename, 'wb')
-		fout.write(urllib2.urlopen(self.lyricurl).read())
-		fout.close()
-		sys.stderr.write(' Lyrics OK.')
+		if self.lyricurl != None:
+			fout = open(self.lyricfilename, 'wb')
+			fout.write(urllib2.urlopen(self.lyricurl).read())
+			fout.close()
+			sys.stderr.write(' Lyrics OK.')
+		else:
+			sys.stderr.write(' Lyrics not available.')

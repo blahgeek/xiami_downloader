@@ -12,6 +12,7 @@ import os
 import urllib2
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC
+from time import time
 class track:
 	def __init__(self, tag):
 		self.id3 = dict()
@@ -26,19 +27,20 @@ class track:
 			self.lyricurl = None
 		self._file = self.id3['artist'] + ' - ' + \
 				self.id3['title'] + '.' + self.url.rpartition('.')[2]
-		sys.stderr.write(self._file + '\n')
 	def download(self, path, ReportHook = None):
 		self.filename = os.path.join(path, self._file)
 		self.lyricfilename = os.path.join(path, 'lyrics', self._file.rpartition('.')[0] + '.lrc')
 		if os.path.exists(self.filename):
-			sys.stderr.write(' File exists. Ignore.')
+			sys.stderr.write(self._file + ' File exists. Ignore.')
 			return
 		req = urllib2.urlopen(self.url)
 		total_size = int(req.info().getheader('Content-Length').strip())
+		print >> sys.stderr, self._file, ' %.2f MB' % (float(total_size) / 1048576)
 		fout = open(self.filename, 'wb')
 		
 		read_size = 0
 		trunk_size = 10240
+		startTime = time()
 		try:
 			while True:
 				_little_data = req.read(trunk_size)
@@ -47,7 +49,7 @@ class track:
 					break
 				fout.write(_little_data)
 				if ReportHook != None:
-					ReportHook(read_size, total_size)
+					ReportHook(read_size, total_size, time() - startTime)
 			fout.close()
 		except KeyboardInterrupt:
 			fout.close()

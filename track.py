@@ -12,7 +12,6 @@ import os
 import urllib2
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3, APIC
-from time import time
 class track:
 	def __init__(self, tag):
 		self.id3 = dict()
@@ -40,7 +39,6 @@ class track:
 		
 		read_size = 0
 		trunk_size = 10240
-		startTime = time()
 		try:
 			while True:
 				_little_data = req.read(trunk_size)
@@ -49,7 +47,7 @@ class track:
 					break
 				fout.write(_little_data)
 				if ReportHook != None:
-					ReportHook(read_size, total_size, time() - startTime)
+					ReportHook(read_size, total_size)
 			fout.close()
 		except KeyboardInterrupt:
 			fout.close()

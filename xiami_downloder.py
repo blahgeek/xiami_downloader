@@ -17,11 +17,23 @@ collecturl_root = r'/type/3'
 save_path = '/home/blahgeek/Music/'
 download_types = ['song', 'album', 'artist', 'collect']
 
-def progress_bar(current, total, time):
-	bar_size = 30
-	done_length = int(float(current) / float(total) * bar_size)
-	print >> sys.stderr, '\r[' + '='*done_length + ' '*(bar_size-done_length) + ']  ', 
-	print >> sys.stderr, '%3d%%  %d kB/s  ' % (100 * current / total, current/(time * 1024)), 
+from time import time
+class progress_bar:
+	def __init__(self):
+		self.lastTime = time()
+		self.lastSize = 0
+		self.bar_size = 30
+		self.speed = 0
+	def __call__(self, current, total):
+		done_length = int(float(current) / float(total) * self.bar_size)
+		print >> sys.stderr, '\r[' + '='*done_length + ' '*(self.bar_size-done_length) + ']  ', 
+		print >> sys.stderr, '%3d%%  %d kB/s  ' % \
+				(100 * current / total, self.speed), 
+		nowTime = time()
+		if nowTime - self.lastTime > 0.5:
+			self.speed = (current - self.lastSize) / ((nowTime - self.lastTime) * 1024)
+			self.lastTime = nowTime
+			self.lastSize = current
 
 if __name__ == '__main__':
 	if len(sys.argv) < 3 or sys.argv[1] not in download_types:
@@ -42,5 +54,5 @@ if __name__ == '__main__':
 	sys.stderr.write(str(len(tracks)) + ' song(s) found.\n\n')
 	for i in tracks:
 		song = track(i)
-		song.download(save_path, ReportHook = progress_bar)
+		song.download(save_path, ReportHook = progress_bar())
 		sys.stderr.write('\n\n')

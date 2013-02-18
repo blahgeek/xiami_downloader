@@ -32,7 +32,9 @@ class track:
 		if os.path.exists(self.filename):
 			sys.stderr.write(self._file + ' File exists. Ignore.')
 			return
-		req = urllib2.urlopen(self.url)
+		req = urllib2.Request(self.url, headers = {'User-Agent': \
+				'python-urllib2/1.0 (X11; Linux x86_64) BlahGeek/21.0.1180.81 xiami-downloader/537.1'})
+		req = urllib2.urlopen(req)
 		total_size = int(req.info().getheader('Content-Length').strip())
 		print >> sys.stderr, self._file, ' %.2f MB' % (float(total_size) / 1048576)
 		fout = open(self.filename, 'wb')

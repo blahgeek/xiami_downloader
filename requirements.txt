@@ -1,0 +1,3 @@
+python-rex
+requests
+mutagen

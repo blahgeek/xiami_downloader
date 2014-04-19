@@ -21,13 +21,11 @@ class Track(object):
         self.lyricurl = geturl('lyric')
         if not self.lyricurl.endswith('.lrc'):
             self.lyricurl = None
-        self.filename = self.id3['artist'] + ' - ' + self.id3['title']
-        self.filename_with_ext = self.filename + '.mp3'
+        self.filename = self.id3['artist'] + ' - ' + self.id3['title'] + '.mp3'
 
     def download(self, save_path, progress_bar):
-        self.filename_with_ext = download(self.url, save_path, 
-                                          self.filename, progress_bar)
-        return self.filename_with_ext
+        self.filename = download(self.url, save_path, self.filename, progress_bar)
+        return self.filename
 
     def download_lyric(self, save_path, progress_bar):
         if self.lyricurl is None:
@@ -45,9 +43,9 @@ class Track(object):
         easyid3['album'] = self.id3['album_name']
         easyid3['artist'] = self.id3['artist'].split(';')
         easyid3['performer'] = easyid3['artist'][0]
-        easyid3.save(self.filename_with_ext)
+        easyid3.save(self.filename)
 
-        harid3 = ID3(self.filename_with_ext)
+        harid3 = ID3(self.filename)
         harid3.add(APIC(
                 encoding = 3,
                 mime = mime_type,

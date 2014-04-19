@@ -2,12 +2,10 @@
 # -*- coding=UTF-8 -*-
 # Created at May 31 08:09 by BlahGeek@Gmail.com
 
-import sys
-if hasattr(sys, 'setdefaultencoding'):
-	sys.setdefaultencoding('UTF-8')
-
 from urllib import unquote
-def geturl(origin):
+
+
+def decrypt(origin):
 	n = int(origin[0])
 	origin = origin[1:]
 	short_lenth = len(origin) / n

@@ -47,18 +47,14 @@ def main():
         'with lyric and ID3 infomation filled')
     parser.add_argument('URL', 
         help='Xiami url to download, can be song/artist/album/collect')
-    parser.add_argument('-n', '--no-lyric', action='store_true',
-        help='Do not download lyric')
-    parser.add_argument('-d', '--destination', default='.',
-        help='Save path, default to current directory')
-    parser.add_argument('-l', '--lyric-destination', default='./lyric/',
-        help='Lyric save path')
+    parser.add_argument('-d', '--destination', default='~/Desktop/',
+        help='Save path, default to ~/Desktop/')
+    parser.add_argument('-l', '--lyric-destination',
+        help='Lyric saving path, do not download lyric if not specified')
     args = parser.parse_args()
 
-    for path in (args.destination, args.lyric_destination):
-        if not os.path.exists(path):
-            print >> sys.stderr, 'mkdir', path
-            os.mkdir(path)
+    destination = os.path.expanduser(args.destination)
+
     xml_url = get_xml_url(*parse_url(args.URL))
     tracks = get_tracks(xml_url)
     print >> sys.stderr, len(tracks), 'track(s) found.'
@@ -66,8 +62,8 @@ def main():
     for x in tracks:
         progress_bar = ProgressBar()
         track = Track(x)
-        track.download(args.destination, progress_bar)
-        if not args.no_lyric:
+        track.download(destination, progress_bar)
+        if args.lyric_destination:
             track.download_lyric(args.lyric_destination, progress_bar)
         track.patch_id3(progress_bar)
 

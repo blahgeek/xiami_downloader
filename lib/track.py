@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 # Created by i@BlahGeek.com at 2014-04-18
 
+import os
 from .decrypt import decrypt
 from .http import download
 from mutagen.easyid3 import EasyID3
@@ -35,7 +36,8 @@ class Track(object):
         download(self.lyricurl, save_path, self.filename, None)
         progress_bar.msg('Done.\n')
 
-    def patch_id3(self, progress_bar):
+    def patch_id3(self, save_path, progress_bar):
+        filepath = os.path.join(save_path, self.filename).encode('utf8')
         progress_bar.msg('Patching ID3...')
         cover_f, mime_type = download(self.picurl)
         easyid3 = EasyID3()
@@ -43,9 +45,9 @@ class Track(object):
         easyid3['album'] = self.id3['album_name']
         easyid3['artist'] = self.id3['artist'].split(';')
         easyid3['performer'] = easyid3['artist'][0]
-        easyid3.save(self.filename)
+        easyid3.save(filepath)
 
-        harid3 = ID3(self.filename)
+        harid3 = ID3(filepath)
         harid3.add(APIC(
                 encoding = 3,
                 mime = mime_type,

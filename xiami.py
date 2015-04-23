@@ -4,6 +4,8 @@
 
 import os
 import sys
+import tempfile
+import shutil
 from BeautifulSoup import BeautifulStoneSoup
 from rex import rex
 from urlparse import urlparse
@@ -47,12 +49,13 @@ def main():
         'with lyric and ID3 infomation filled')
     parser.add_argument('URL', 
         help='Xiami url to download, can be song/artist/album/collect')
-    parser.add_argument('-d', '--destination', default='~/Desktop/',
-        help='Save path, default to ~/Desktop/')
+    parser.add_argument('-d', '--destination', default='~/Music/iTunes/iTunes Media/Automatically Add to iTunes.localized/',
+        help='Save path, default to ~/Music/iTunes/iTunes Media/Automatically Add to iTunes.localized/')
     parser.add_argument('-l', '--lyric-destination',
         help='Lyric saving path, do not download lyric if not specified')
     args = parser.parse_args()
 
+    tempdir = tempfile.gettempdir()
     destination = os.path.expanduser(args.destination)
 
     xml_url = get_xml_url(*parse_url(args.URL))
@@ -62,10 +65,12 @@ def main():
     for x in tracks:
         progress_bar = ProgressBar()
         track = Track(x)
-        track.download(destination, progress_bar)
+        filename = track.download(tempdir, progress_bar)
         if args.lyric_destination:
             track.download_lyric(args.lyric_destination, progress_bar)
-        track.patch_id3(progress_bar)
+        track.patch_id3(tempdir, progress_bar)
+        shutil.move(os.path.join(tempdir, filename),
+                    os.path.join(destination, filename))
 
 
 if __name__ == '__main__':

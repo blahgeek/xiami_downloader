@@ -1,6 +1,13 @@
 Xiami.com Downloader
 ================
 
+**THIS PROJECT IS DEPERATED**
+
+**THE CODE HAS BEEN CONTRIBUTED TO [youtube-dl](https://github.com/rg3/youtube-dl)**
+
+----------------
+
+
 Download a single track, collection, album or artist from xiami.com __with lyric__ and __ID3 infomation__ filled.
 
 - Goto [xiami.com](www.xiami.com)
